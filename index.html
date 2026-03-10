@@ -1080,7 +1080,10 @@ function updateAll() {
 }
 
 initPills();
-updateAll();
+// Ensure charts render correctly on initial page load
+window.addEventListener('load', function() {
+  setTimeout(updateAll, 150);
+});
 </script>
 </body>
         </html>
