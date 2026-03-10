@@ -5,170 +5,58 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VIH/SIDA en América Latina – Dashboard 2000–2020</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <style>
-  :root {
-    --primary: #c0392b;
-    --secondary: #2c3e50;
-    --accent: #e74c3c;
-    --light: #f8f9fa;
-    --card-bg: #ffffff;
-    --border: #dee2e6;
-    --text: #212529;
-    --muted: #6c757d;
-    --green: #27ae60;
-    --blue: #2980b9;
-    --orange: #e67e22;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f2f5; color: var(--text); }
-
-  header {
-    background: linear-gradient(135deg, #8e1a14 0%, #c0392b 50%, #e74c3c 100%);
-    color: white;
-    padding: 2rem 2rem 1.5rem;
-    text-align: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  }
-  header h1 { font-size: clamp(1.4rem, 3vw, 2.2rem); font-weight: 700; letter-spacing: -0.5px; }
-  header p { margin-top: 0.5rem; opacity: 0.9; font-size: 0.95rem; }
-  .badges { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; margin-top: 1rem; }
-  .badge { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); border-radius: 20px; padding: 0.25rem 0.8rem; font-size: 0.78rem; }
-
-  .container { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
-
-  /* KPI Cards */
-  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
-  .kpi-card {
-    background: var(--card-bg);
-    border-radius: 12px;
-    padding: 1.25rem;
-    text-align: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    border-top: 4px solid var(--primary);
-    transition: transform 0.2s;
-  }
-  .kpi-card:hover { transform: translateY(-3px); }
-  .kpi-card.green { border-top-color: var(--green); }
-  .kpi-card.blue { border-top-color: var(--blue); }
-  .kpi-card.orange { border-top-color: var(--orange); }
-  .kpi-card.purple { border-top-color: #8e44ad; }
-  .kpi-value { font-size: 1.9rem; font-weight: 800; color: var(--secondary); line-height: 1; }
-  .kpi-label { font-size: 0.72rem; color: var(--muted); margin-top: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px; }
-  .kpi-sub { font-size: 0.78rem; color: var(--muted); margin-top: 0.25rem; }
-
-  /* Controls */
-  .controls {
-    background: var(--card-bg);
-    border-radius: 12px;
-    padding: 1rem 1.25rem;
-    margin-bottom: 1.5rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    align-items: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  }
-  .controls label { font-size: 0.82rem; font-weight: 600; color: var(--secondary); }
-  .controls select, .controls input[type=range] { margin-left: 0.5rem; }
-  .controls select {
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 0.3rem 0.6rem;
-    font-size: 0.85rem;
-    background: white;
-    cursor: pointer;
-  }
-  .year-display { font-weight: 700; color: var(--primary); font-size: 1.1rem; min-width: 45px; display: inline-block; }
-
-  /* Chart Grid */
-  .chart-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(460px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem; }
-  .chart-card {
-    background: var(--card-bg);
-    border-radius: 12px;
-    padding: 1.25rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  }
-  .chart-card.wide { grid-column: 1 / -1; }
-  .chart-title { font-size: 0.92rem; font-weight: 700; color: var(--secondary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
-  .chart-title .icon { font-size: 1.1rem; }
-  .chart-wrap { position: relative; height: 300px; }
-  .chart-wrap.tall { height: 400px; }
-
-  /* Table */
-  .table-card {
-    background: var(--card-bg);
-    border-radius: 12px;
-    padding: 1.25rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    margin-bottom: 1.5rem;
-    overflow-x: auto;
-  }
-  .table-title { font-size: 0.92rem; font-weight: 700; color: var(--secondary); margin-bottom: 1rem; }
-  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
-  thead th {
-    background: var(--secondary);
-    color: white;
-    padding: 0.6rem 0.8rem;
-    text-align: left;
-    font-weight: 600;
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-    position: sticky;
-    top: 0;
-    cursor: pointer;
-    user-select: none;
-  }
-  thead th:hover { background: #3d5166; }
-  tbody tr:nth-child(even) { background: #f8f9fa; }
-  tbody tr:hover { background: #fff3f3; }
-  tbody td { padding: 0.55rem 0.8rem; border-bottom: 1px solid #eee; }
-  .bar-cell { display: flex; align-items: center; gap: 0.5rem; }
-  .mini-bar { height: 8px; border-radius: 4px; transition: width 0.3s; }
-  .na { color: #aaa; font-style: italic; }
-  .trend-up { color: var(--accent); }
-  .trend-down { color: var(--green); }
-
-  /* Region filter pills */
-  .pills { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-  .pill {
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.78rem;
-    font-weight: 600;
-    border: 2px solid transparent;
-    cursor: pointer;
-    transition: all 0.15s;
-    background: #eee;
-    color: var(--secondary);
-  }
-  .pill.active { background: var(--primary); color: white; border-color: var(--primary); }
-  .pill:hover:not(.active) { border-color: var(--primary); color: var(--primary); }
-
-  footer {
-    text-align: center;
-    padding: 1.5rem;
-    font-size: 0.75rem;
-    color: var(--muted);
-    border-top: 1px solid var(--border);
-    background: white;
-    margin-top: 1rem;
-  }
-  footer a { color: var(--primary); text-decoration: none; }
-  footer a:hover { text-decoration: underline; }
-
-  @media (max-width: 600px) {
-    .chart-grid { grid-template-columns: 1fr; }
-    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-  }
+:root{--primary:#c0392b;--secondary:#2c3e50;--light:#f0f2f5;--card:#fff;--border:#dee2e6;--muted:#6c757d;--green:#27ae60;--blue:#2980b9;--orange:#e67e22}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--light);color:var(--secondary)}
+header{background:linear-gradient(135deg,#8e1a14,#c0392b 50%,#e74c3c);color:#fff;padding:2rem;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+header h1{font-size:clamp(1.4rem,3vw,2.2rem);font-weight:800}
+header p{margin-top:.4rem;opacity:.9;font-size:.95rem}
+.badges{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.9rem}
+.badge{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);border-radius:20px;padding:.25rem .8rem;font-size:.78rem}
+.container{max-width:1400px;margin:0 auto;padding:1.5rem}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1rem;margin-bottom:1.5rem}
+.kpi{background:var(--card);border-radius:12px;padding:1.25rem;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.08);border-top:4px solid var(--primary);transition:transform .2s}
+.kpi:hover{transform:translateY(-3px)}
+.kpi.g{border-top-color:var(--green)}.kpi.b{border-top-color:var(--blue)}.kpi.o{border-top-color:var(--orange)}.kpi.p{border-top-color:#8e44ad}
+.kpi-val{font-size:1.9rem;font-weight:800;line-height:1}
+.kpi-lbl{font-size:.72rem;color:var(--muted);margin-top:.4rem;text-transform:uppercase;letter-spacing:.5px}
+.kpi-sub{font-size:.78rem;color:var(--muted);margin-top:.2rem}
+.ctrl{background:var(--card);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.5rem;display:flex;flex-wrap:wrap;gap:1rem;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.ctrl label{font-size:.82rem;font-weight:600}
+.ctrl select{border:1px solid var(--border);border-radius:8px;padding:.3rem .6rem;font-size:.85rem;background:#fff;cursor:pointer;margin-left:.4rem}
+.yr{font-weight:700;color:var(--primary);font-size:1.1rem;min-width:45px;display:inline-block}
+.pills{display:flex;gap:.4rem;flex-wrap:wrap}
+.pill{padding:.25rem .7rem;border-radius:20px;font-size:.78rem;font-weight:600;border:2px solid transparent;cursor:pointer;background:#eee;color:var(--secondary);transition:all .15s}
+.pill.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.pill:hover:not(.active){border-color:var(--primary);color:var(--primary)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:1.25rem;margin-bottom:1.25rem}
+.card{background:var(--card);border-radius:12px;padding:1.25rem;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.card.wide{grid-column:1/-1}
+.card-title{font-size:.9rem;font-weight:700;margin-bottom:.9rem;display:flex;align-items:center;gap:.4rem}
+.wrap{position:relative;height:300px}
+.wrap.tall{height:420px}
+.tbl-card{background:var(--card);border-radius:12px;padding:1.25rem;box-shadow:0 2px 8px rgba(0,0,0,.08);overflow-x:auto;margin-bottom:1.5rem}
+.tbl-title{font-size:.9rem;font-weight:700;margin-bottom:.9rem}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+thead th{background:var(--secondary);color:#fff;padding:.55rem .75rem;text-align:left;font-size:.76rem;text-transform:uppercase;letter-spacing:.3px;cursor:pointer;user-select:none;position:sticky;top:0}
+thead th:hover{background:#3d5166}
+tbody tr:nth-child(even){background:#f8f9fa}
+tbody tr:hover{background:#fff3f3}
+tbody td{padding:.5rem .75rem;border-bottom:1px solid #eee}
+.bar-cell{display:flex;align-items:center;gap:.4rem}
+.mini-bar{height:8px;border-radius:4px}
+.na{color:#bbb;font-style:italic}
+.up{color:#e74c3c}.dn{color:#27ae60}
+footer{text-align:center;padding:1.25rem;font-size:.75rem;color:var(--muted);border-top:1px solid var(--border);background:#fff;margin-top:.5rem}
+footer a{color:var(--primary);text-decoration:none}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}.kpi-grid{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
-
 <header>
   <h1>🦠 VIH/SIDA en América Latina</h1>
-  <p>Dashboard Epidemiológico Interactivo — 18 países · 2000 – 2020</p>
+  <p>Dashboard Epidemiológico Interactivo · 18 países · 2000–2020</p>
   <div class="badges">
     <span class="badge">📊 Harvard Dataverse</span>
     <span class="badge">🌍 UNAIDS / World Bank</span>
@@ -178,81 +66,53 @@
 </header>
 
 <div class="container">
-
-  <!-- KPI Cards -->
   <div class="kpi-grid" id="kpiGrid"></div>
 
-  <!-- Controls -->
-  <div class="controls">
+  <div class="ctrl">
     <div>
-      <label>📅 Año seleccionado:</label>
-      <input type="range" id="yearSlider" min="0" max="4" value="4" step="1" style="width:140px">
-      <span class="year-display" id="yearLabel">2020</span>
+      <label>📅 Año:</label>
+      <input type="range" id="yearSlider" min="0" max="4" value="4" step="1" style="width:130px;margin-left:.5rem">
+      <span class="yr" id="yearLabel">2020</span>
     </div>
     <div>
       <label>🌎 Región:</label>
-      <div class="pills" id="regionPills"></div>
+      <div class="pills" id="regionPills" style="margin-left:.5rem"></div>
     </div>
     <div>
-      <label>📈 Indicador tabla:</label>
-      <select id="indicatorSelect">
-        <option value="plhiv">PVVIH (Personas viviendo con VIH)</option>
-        <option value="new_inf">Nuevas Infecciones / año</option>
-        <option value="incidence">Tasa Incidencia por 1,000</option>
-        <option value="art">Cobertura TAR (%)</option>
-        <option value="deaths">Muertes SIDA por 1,000</option>
+      <label>📋 Tabla:</label>
+      <select id="indSel">
+        <option value="plhiv">PVVIH</option>
+        <option value="new_inf">Nuevas Infecciones</option>
+        <option value="inc">Incidencia/1,000</option>
+        <option value="art">Cobertura TAR %</option>
+        <option value="deaths">Muertes SIDA/1,000</option>
       </select>
     </div>
   </div>
 
-  <!-- Charts Row 1 -->
-  <div class="chart-grid">
-    <div class="chart-card">
-      <div class="chart-title"><span class="icon">👥</span> PVVIH por País (año seleccionado)</div>
-      <div class="chart-wrap"><canvas id="chartPLHIV"></canvas></div>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title"><span class="icon">💉</span> Cobertura TAR por País (%)</div>
-      <div class="chart-wrap"><canvas id="chartART"></canvas></div>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title"><span class="icon">📉</span> Nuevas Infecciones por País</div>
-      <div class="chart-wrap"><canvas id="chartNewInf"></canvas></div>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title"><span class="icon">⚠️</span> Muertes SIDA por 1,000 habitantes</div>
-      <div class="chart-wrap"><canvas id="chartDeaths"></canvas></div>
-    </div>
-    <div class="chart-card wide">
-      <div class="chart-title"><span class="icon">📈</span> Evolución Temporal — PVVIH (todos los países seleccionados)</div>
-      <div class="chart-wrap tall"><canvas id="chartTimeline"></canvas></div>
-    </div>
-    <div class="chart-card wide">
-      <div class="chart-title"><span class="icon">🔬</span> Evolución Cobertura TAR (%) — Todos los países</div>
-      <div class="chart-wrap"><canvas id="chartARTTimeline"></canvas></div>
-    </div>
+  <div class="grid2">
+    <div class="card"><div class="card-title">👥 PVVIH por País</div><div class="wrap"><canvas id="cPLHIV"></canvas></div></div>
+    <div class="card"><div class="card-title">💊 Cobertura TAR (%)</div><div class="wrap"><canvas id="cART"></canvas></div></div>
+    <div class="card"><div class="card-title">🔴 Nuevas Infecciones</div><div class="wrap"><canvas id="cNEW"></canvas></div></div>
+    <div class="card"><div class="card-title">⚠️ Muertes SIDA por 1,000</div><div class="wrap"><canvas id="cDEATHS"></canvas></div></div>
+    <div class="card wide"><div class="card-title">📈 Evolución PVVIH 2000–2020 (todos los países)</div><div class="wrap tall"><canvas id="cTIMELINE"></canvas></div></div>
+    <div class="card wide"><div class="card-title">🔬 Evolución Cobertura TAR (%) 2000–2020</div><div class="wrap tall"><canvas id="cARTTIME"></canvas></div></div>
   </div>
 
-  <!-- Data Table -->
-  <div class="table-card">
-    <div class="table-title">📋 Tabla Comparativa de Datos (haz clic en un encabezado para ordenar)</div>
-    <table id="dataTable">
-      <thead id="tableHead"></thead>
-      <tbody id="tableBody"></tbody>
-    </table>
+  <div class="tbl-card">
+    <div class="tbl-title">📋 Tabla Comparativa — clic en columna para ordenar</div>
+    <table><thead id="tHead"></thead><tbody id="tBody"></tbody></table>
   </div>
-
 </div>
 
 <footer>
-  Datos: <a href="https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/IRMDUB" target="_blank">Harvard Dataverse — doi:10.7910/DVN/IRMDUB</a> ·
-  Fuente: World Bank / UNAIDS Estimates · Autor: de la Serna, Juan Moisés (UNIR) ·
+  Datos: <a href="https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/IRMDUB" target="_blank">Harvard Dataverse · doi:10.7910/DVN/IRMDUB</a> ·
+  Fuente: World Bank / UNAIDS · Autor: de la Serna, Juan Moisés (UNIR) ·
   <a href="https://doi.org/10.7910/DVN/IRMDUB" target="_blank">Citar dataset</a>
 </footer>
 
 <script>
-// ===== DATA =====
-const RAW = [
+const DATA = [
   {c:"Argentina",iso:"ARG",reg:"South America",plhiv:[56000,75000,94000,110000,130000],new_inf:[5200,5200,5100,5000,4800],inc:[0.28,0.27,0.25,0.23,0.21],art:[18,33,46,61,72],deaths:[0.3,0.3,0.4,0.4,0.4]},
   {c:"Bolivia",iso:"BOL",reg:"South America",plhiv:[15000,18000,21000,24000,28000],new_inf:[1700,1800,1800,1800,1800],inc:[0.4,0.38,0.35,0.32,0.29],art:[0,1,6,23,46],deaths:[0.3,0.3,0.3,0.3,0.4]},
   {c:"Brasil",iso:"BRA",reg:"South America",plhiv:[300000,360000,490000,710000,970000],new_inf:[null,null,null,null,null],inc:[0.26,0.28,0.48,0.59,0.57],art:[31,49,50,63,68],deaths:[0.3,0.3,0.4,0.5,0.7]},
@@ -273,817 +133,134 @@ const RAW = [
   {c:"Venezuela",iso:"VEN",reg:"South America",plhiv:[null,null,null,null,null],new_inf:[null,null,null,null,null],inc:[null,null,null,null,null],art:[null,null,null,null,null],deaths:[null,null,null,null,null]}
 ];
 
-const YEARS = [2000, 2005, 2010, 2015, 2020];
-const REGIONS = ["Todos","South America","Central America","Caribbean","North America (Latin)"];
-const COLORS = [
-  '#e74c3c','#3498db','#2ecc71','#f39c12','#9b59b6',
-  '#1abc9c','#e67e22','#34495e','#e91e63','#00bcd4',
-  '#ff5722','#4caf50','#607d8b','#ff9800','#673ab7',
-  '#795548','#009688','#f44336'
-];
+const YEARS=[2000,2005,2010,2015,2020];
+const REGIONS=["Todos","South America","Central America","Caribbean","North America (Latin)"];
+const PAL=['#e74c3c','#3498db','#2ecc71','#f39c12','#9b59b6','#1abc9c','#e67e22','#34495e','#e91e63','#00bcd4','#ff5722','#4caf50','#607d8b','#ff9800','#673ab7','#795548','#009688','#f44336'];
 
-let currentYear = 4;
-let currentRegion = "Todos";
-let sortCol = null, sortAsc = true;
-let charts = {};
+let yi=4, reg="Todos", sortCol=null, sortAsc=true;
+const charts={};
 
-// ===== FILTERS =====
-function filteredData() {
-  if (currentRegion === "Todos") return RAW;
-  return RAW.filter(d => d.reg === currentRegion);
+const fd=()=> reg==="Todos"?DATA:DATA.filter(d=>d.reg===reg);
+const fmt=(n,d=0)=>n==null?"N/A":n.toLocaleString('es-ES',{maximumFractionDigits:d});
+
+function kpis(){
+  const d=fd().filter(d=>d.plhiv[yi]!==null);
+  const totP=d.reduce((s,x)=>s+(x.plhiv[yi]||0),0);
+  const totN=d.filter(x=>x.new_inf[yi]!==null).reduce((s,x)=>s+(x.new_inf[yi]||0),0);
+  const avgA=d.filter(x=>x.art[yi]!==null).reduce((s,x,_,a)=>s+x.art[yi]/a.length,0);
+  const avgD=d.filter(x=>x.deaths[yi]!==null).reduce((s,x,_,a)=>s+x.deaths[yi]/a.length,0);
+  document.getElementById('kpiGrid').innerHTML=`
+    <div class="kpi"><div class="kpi-val">${fmt(totP)}</div><div class="kpi-lbl">PVVIH Total</div><div class="kpi-sub">Año ${YEARS[yi]}</div></div>
+    <div class="kpi o"><div class="kpi-val">${totN>0?fmt(totN):'N/A'}</div><div class="kpi-lbl">Nuevas Infecciones</div><div class="kpi-sub">Año ${YEARS[yi]}</div></div>
+    <div class="kpi g"><div class="kpi-val">${fmt(avgA,1)}%</div><div class="kpi-lbl">Cobertura TAR Media</div><div class="kpi-sub">${d.length} países</div></div>
+    <div class="kpi b"><div class="kpi-val">${fmt(avgD,2)}</div><div class="kpi-lbl">Muertes SIDA/1,000</div><div class="kpi-sub">Promedio regional</div></div>
+    <div class="kpi p"><div class="kpi-val">${d.length}</div><div class="kpi-lbl">Países con datos</div><div class="kpi-sub">de 18 totales</div></div>`;
 }
 
-function fmt(n, dec=0) {
-  if (n === null || n === undefined) return "N/A";
-  return n.toLocaleString('es-ES', {maximumFractionDigits: dec});
+function bar(id,data,labels,colorKey){
+  const ctx=document.getElementById(id).getContext('2d');
+  if(charts[id])charts[id].destroy();
+  charts[id]=new Chart(ctx,{
+    type:'bar',
+    data:{labels,datasets:[{data,backgroundColor:PAL.map(c=>c+'cc'),borderColor:PAL,borderWidth:1.5,borderRadius:4}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+fmt(c.parsed.x,2)}}},
+      scales:{x:{ticks:{font:{size:10}},grid:{color:'#f0f0f0'}},y:{ticks:{font:{size:10}}}}}
+  });
 }
 
-// ===== KPIs =====
-function updateKPIs() {
-  const yi = currentYear;
-  const data = filteredData().filter(d => d.plhiv[yi] !== null);
-  const totalPLHIV = data.reduce((s,d) => s + (d.plhiv[yi]||0), 0);
-  const totalNewInf = data.filter(d=>d.new_inf[yi]!==null).reduce((s,d) => s + (d.new_inf[yi]||0), 0);
-  const avgART = data.filter(d=>d.art[yi]!==null).reduce((s,d,_,a) => s + d.art[yi]/a.length, 0);
-  const avgDeaths = data.filter(d=>d.deaths[yi]!==null).reduce((s,d,_,a) => s + d.deaths[yi]/a.length, 0);
-  const countries = data.length;
-
-  const grid = document.getElementById('kpiGrid');
-  grid.innerHTML = `
-    <div class="kpi-card">
-      <div class="kpi-value">${fmt(totalPLHIV)}</div>
-      <div class="kpi-label">PVVIH Total</div>
-      <div class="kpi-sub">Año ${YEARS[yi]}</div>
-    </div>
-    <div class="kpi-card orange">
-      <div class="kpi-value">${totalNewInf>0?fmt(totalNewInf):'N/A'}</div>
-      <div class="kpi-label">Nuevas Infecciones</div>
-      <div class="kpi-sub">Año ${YEARS[yi]}</div>
-    </div>
-    <div class="kpi-card green">
-      <div class="kpi-value">${fmt(avgART,1)}%</div>
-      <div class="kpi-label">Cobertura TAR Media</div>
-      <div class="kpi-sub">${countries} países</div>
-    </div>
-    <div class="kpi-card blue">
-      <div class="kpi-value">${fmt(avgDeaths,2)}</div>
-      <div class="kpi-label">Muertes SIDA/1,000</div>
-      <div class="kpi-sub">Promedio regional</div>
-    </div>
-    <div class="kpi-card purple">
-      <div class="kpi-value">${countries}</div>
-      <div class="kpi-label">Países con datos</div>
-      <div class="kpi-sub">de 18 totales</div>
-    </div>
-  `;
+function bars(){
+  const d=fd();
+  const v=d.filter(x=>x.plhiv[yi]!==null).sort((a,b)=>b.plhiv[yi]-a.plhiv[yi]);
+  bar('cPLHIV',v.map(x=>x.plhiv[yi]),v.map(x=>x.iso));
+  const va=d.filter(x=>x.art[yi]!==null).sort((a,b)=>b.art[yi]-a.art[yi]);
+  bar('cART',va.map(x=>x.art[yi]),va.map(x=>x.iso));
+  const vn=d.filter(x=>x.new_inf[yi]!==null).sort((a,b)=>b.new_inf[yi]-a.new_inf[yi]);
+  bar('cNEW',vn.map(x=>x.new_inf[yi]),vn.map(x=>x.iso));
+  const vd=d.filter(x=>x.deaths[yi]!==null).sort((a,b)=>b.deaths[yi]-a.deaths[yi]);
+  bar('cDEATHS',vd.map(x=>x.deaths[yi]),vd.map(x=>x.iso));
 }
 
-// ===== CHARTS =====
-function makeBar(id, label, dataArr, labelsArr, color='#e74c3c', horizontal=false) {
-  const ctx = document.getElementById(id).getContext('2d');
-  if(charts[id]) charts[id].destroy();
-  charts[id] = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: labelsArr,
-      datasets: [{
-        label,
-        data: dataArr,
-        backgroundColor: COLORS.map(c => c + 'cc'),
-        borderColor: COLORS,
-        borderWidth: 1.5,
-        borderRadius: 4
-      }]
-    },
-    options: {
-      indexAxis: horizontal ? 'y' : 'x',
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {display: false},
-        tooltip: {
-          callbacks: {
-            label: ctx => ' ' + fmt(ctx.parsed[horizontal?'x':'y'], 1)
-          }
-        }
-      },
-      scales: {
-        x: { ticks: { font: {size:10}, maxRotation: 40 } },
-        y: { ticks: { font: {size:10} }, grid: {color:'#f0f0f0'} }
+function line(id,datasets,yFmt){
+  const ctx=document.getElementById(id).getContext('2d');
+  if(charts[id])charts[id].destroy();
+  charts[id]=new Chart(ctx,{
+    type:'line',
+    data:{labels:YEARS,datasets},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'right',labels:{font:{size:10},boxWidth:12}}},
+      scales:{
+        x:{ticks:{font:{size:11}}},
+        y:{ticks:{font:{size:10},callback:yFmt||((v)=>v)},grid:{color:'#f0f0f0'}}
       }
     }
   });
 }
 
-function updateBarCharts() {
-  const yi = currentYear;
-  const data = filteredData();
-  const valid = data.filter(d => d.plhiv[yi] !== null);
+function timelines(){
+  const d=fd();
+  const plhivDS=d.filter(x=>x.plhiv.some(v=>v!==null)).map((x,i)=>({
+    label:x.c,data:x.plhiv,borderColor:PAL[i%PAL.length],backgroundColor:PAL[i%PAL.length]+'22',
+    tension:0.3,borderWidth:2,pointRadius:4,fill:false,spanGaps:true
+  }));
+  line('cTIMELINE',plhivDS,v=>v>=1000?Math.round(v/1000)+'k':v);
 
-  // PLHIV
-  const plhivSorted = [...valid].sort((a,b)=>(b.plhiv[yi]||0)-(a.plhiv[yi]||0));
-  makeBar('chartPLHIV','PVVIH',plhivSorted.map(d=>d.plhiv[yi]),plhivSorted.map(d=>d.iso),'#e74c3c',true);
-
-  // ART
-  const artValid = data.filter(d=>d.art[yi]!==null).sort((a,b)=>b.art[yi]-a.art[yi]);
-  makeBar('chartART','TAR %',artValid.map(d=>d.art[yi]),artValid.map(d=>d.iso),'#27ae60',true);
-
-  // New Infections
-  const niValid = data.filter(d=>d.new_inf[yi]!==null).sort((a,b)=>b.new_inf[yi]-a.new_inf[yi]);
-  makeBar('chartNewInf','Nuevas Infecciones',niValid.map(d=>d.new_inf[yi]),niValid.map(d=>d.iso),'#e67e22',true);
-
-  // Deaths
-  const deathsValid = data.filter(d=>d.deaths[yi]!==null).sort((a,b)=>b.deaths[yi]-a.deaths[yi]);
-  makeBar('chartDeaths','Muertes/1000',deathsValid.map(d=>d.deaths[yi]),deathsValid.map(d=>d.iso),'#c0392b',true);
+  const artDS=d.filter(x=>x.art.some(v=>v!==null)).map((x,i)=>({
+    label:x.c,data:x.art,borderColor:PAL[i%PAL.length],backgroundColor:PAL[i%PAL.length]+'22',
+    tension:0.3,borderWidth:2,pointRadius:4,fill:false,spanGaps:true
+  }));
+  line('cARTTIME',artDS,v=>v+'%');
 }
 
-function updateTimeline() {
-  const data = filteredData().filter(d => d.plhiv.some(v=>v!==null));
-  const ctx = document.getElementById('chartTimeline').getContext('2d');
-  if(charts['chartTimeline']) charts['chartTimeline'].destroy();
-  charts['chartTimeline'] = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: YEARS,
-      datasets: data.map((d,i) => ({
-        label: d.c,
-        data: d.plhiv,
-        borderColor: COLORS[i % COLORS.length],
-        backgroundColor: COLORS[i % COLORS.length] + '22',
-        tension: 0.3,
-        borderWidth: 2,
-        pointRadius: 4,
-        fill: false,
-        spanGaps: true
-      }))
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { position:'right', labels:{font:{size:10}, boxWidth:12} },
-        tooltip: { callbacks: { label: c => ' ' + c.dataset.label + ': ' + fmt(c.parsed.y) } }
-      },
-      scales: {
-        y: { ticks: {font:{size:10}}, grid:{color:'#f0f0f0'} },
-        x: { ticks: {font:{size:11}} }
-      }
-    }
-  });
-
-  // ART Timeline
-  const artData = filteredData().filter(d => d.art.some(v=>v!==null));
-  const ctx2 = document.getElementById('chartARTTimeline').getContext('2d');
-  if(charts['chartARTTimeline']) charts['chartARTTimeline'].destroy();
-  charts['chartARTTimeline'] = new Chart(ctx2, {
-    type: 'line',
-    data: {
-      labels: YEARS,
-      datasets: artData.map((d,i) => ({
-        label: d.c,
-        data: d.art,
-        borderColor: COLORS[i % COLORS.length],
-        backgroundColor: COLORS[i % COLORS.length] + '22',
-        tension: 0.3,
-        borderWidth: 2,
-        pointRadius: 4,
-        fill: false,
-        spanGaps: true
-      }))
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { position:'right', labels:{font:{size:10}, boxWidth:12} },
-        tooltip: { callbacks: { label: c => ' ' + c.dataset.label + ': ' + fmt(c.parsed.y,1) + '%' } }
-      },
-      scales: {
-        y: { min:0, max:110, ticks:{font:{size:10}, callback: v=>v+'%'}, grid:{color:'#f0f0f0'} },
-        x: { ticks: {font:{size:11}} }
-      }
-    }
-  });
-}
-
-// ===== TABLE =====
-const IND_KEYS = { plhiv:'plhiv', new_inf:'new_inf', incidence:'inc', art:'art', deaths:'deaths' };
-const IND_LABELS = { plhiv:'PVVIH', new_inf:'Nuevas Infecciones', incidence:'Incidencia/1000', art:'TAR %', deaths:'Muertes/1000' };
-
-function updateTable() {
-  const ind = document.getElementById('indicatorSelect').value;
-  const key = IND_KEYS[ind];
-  let data = filteredData();
-
-  // sort
-  if(sortCol !== null) {
-    data = [...data].sort((a,b) => {
-      let av = sortCol === 'country' ? a.c : a[key][sortCol];
-      let bv = sortCol === 'country' ? b.c : b[key][sortCol];
-      if(av===null) av = -Infinity;
-      if(bv===null) bv = -Infinity;
-      return sortAsc ? (av > bv ? 1 : -1) : (av < bv ? 1 : -1);
+function table(){
+  const key=document.getElementById('indSel').value;
+  let d=[...fd()];
+  if(sortCol!==null){
+    d.sort((a,b)=>{
+      let av=sortCol==='c'?a.c:a[key][sortCol];
+      let bv=sortCol==='c'?b.c:b[key][sortCol];
+      if(av==null)av=-Infinity; if(bv==null)bv=-Infinity;
+      return sortAsc?(av>bv?1:-1):(av<bv?1:-1);
     });
   }
-
-  // Header
-  const head = document.getElementById('tableHead');
-  head.innerHTML = `<tr>
-    <th onclick="sortTable('country')">País ↕</th>
-    <th>Región</th>
-    ${YEARS.map((y,i) => `<th onclick="sortTable(${i})">${y} ↕</th>`).join('')}
-    <th>Tendencia 2000→2020</th>
-  </tr>`;
-
-  const maxVals = YEARS.map((_,yi) => Math.max(...data.map(d=>d[key][yi]||0)));
-
-  const tbody = document.getElementById('tableBody');
-  tbody.innerHTML = data.map(d => {
-    const cells = YEARS.map((y,yi) => {
-      const v = d[key][yi];
-      if(v===null) return `<td><span class="na">N/A</span></td>`;
-      const pct = maxVals[yi] > 0 ? (v/maxVals[yi]*100).toFixed(1) : 0;
-      const barColor = key==='art' ? '#27ae60' : key==='deaths' ? '#c0392b' : '#3498db';
-      return `<td>
-        <div class="bar-cell">
-          <div class="mini-bar" style="width:${pct}%;background:${barColor};min-width:2px"></div>
-          <span>${fmt(v, key==='art'||key==='deaths'||key==='incidence'?2:0)}</span>
-        </div>
-      </td>`;
-    });
-    const v0 = d[key][0], v4 = d[key][4];
-    let trend = '<span class="na">–</span>';
-    if(v0!==null && v4!==null) {
-      const diff = ((v4-v0)/Math.abs(v0||1)*100).toFixed(1);
-      const cls = parseFloat(diff) > 0 ? 'trend-up' : 'trend-down';
-      const arrow = parseFloat(diff) > 0 ? '↑' : '↓';
-      trend = `<span class="${cls}">${arrow} ${Math.abs(diff)}%</span>`;
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VIH/SIDA en América Latina – Dashboard 2000–2020</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
-<style>
-  :root {
-    --primary: #c0392b;
-    --secondary: #2c3e50;
-    --accent: #e74c3c;
-    --light: #f8f9fa;
-    --card-bg: #ffffff;
-    --border: #dee2e6;
-    --text: #212529;
-    --muted: #6c757d;
-    --green: #27ae60;
-    --blue: #2980b9;
-    --orange: #e67e22;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f2f5; color: var(--text); }
-
-  header {
-    background: linear-gradient(135deg, #8e1a14 0%, #c0392b 50%, #e74c3c 100%);
-    color: white;
-    padding: 2rem 2rem 1.5rem;
-    text-align: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  }
-  header h1 { font-size: clamp(1.4rem, 3vw, 2.2rem); font-weight: 700; letter-spacing: -0.5px; }
-  header p { margin-top: 0.5rem; opacity: 0.9; font-size: 0.95rem; }
-  .badges { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; margin-top: 1rem; }
-  .badge { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); border-radius: 20px; padding: 0.25rem 0.8rem; font-size: 0.78rem; }
-
-  .container { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
-
-  /* KPI Cards */
-  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
-  .kpi-card {
-    background: var(--card-bg);
-    border-radius: 12px;
-    padding: 1.25rem;
-    text-align: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    border-top: 4px solid var(--primary);
-    transition: transform 0.2s;
-  }
-  .kpi-card:hover { transform: translateY(-3px); }
-  .kpi-card.green { border-top-color: var(--green); }
-  .kpi-card.blue { border-top-color: var(--blue); }
-  .kpi-card.orange { border-top-color: var(--orange); }
-  .kpi-card.purple { border-top-color: #8e44ad; }
-  .kpi-value { font-size: 1.9rem; font-weight: 800; color: var(--secondary); line-height: 1; }
-  .kpi-label { font-size: 0.72rem; color: var(--muted); margin-top: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px; }
-  .kpi-sub { font-size: 0.78rem; color: var(--muted); margin-top: 0.25rem; }
-
-  /* Controls */
-  .controls {
-    background: var(--card-bg);
-    border-radius: 12px;
-    padding: 1rem 1.25rem;
-    margin-bottom: 1.5rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    align-items: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  }
-  .controls label { font-size: 0.82rem; font-weight: 600; color: var(--secondary); }
-  .controls select, .controls input[type=range] { margin-left: 0.5rem; }
-  .controls select {
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 0.3rem 0.6rem;
-    font-size: 0.85rem;
-    background: white;
-    cursor: pointer;
-  }
-  .year-display { font-weight: 700; color: var(--primary); font-size: 1.1rem; min-width: 45px; display: inline-block; }
-
-  /* Chart Grid */
-  .chart-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(460px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem; }
-  .chart-card {
-    background: var(--card-bg);
-    border-radius: 12px;
-    padding: 1.25rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  }
-  .chart-card.wide { grid-column: 1 / -1; }
-  .chart-title { font-size: 0.92rem; font-weight: 700; color: var(--secondary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
-  .chart-title .icon { font-size: 1.1rem; }
-  .chart-wrap { position: relative; height: 300px; }
-  .chart-wrap.tall { height: 400px; }
-
-  /* Table */
-  .table-card {
-    background: var(--card-bg);
-    border-radius: 12px;
-    padding: 1.25rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    margin-bottom: 1.5rem;
-    overflow-x: auto;
-  }
-  .table-title { font-size: 0.92rem; font-weight: 700; color: var(--secondary); margin-bottom: 1rem; }
-  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
-  thead th {
-    background: var(--secondary);
-    color: white;
-    padding: 0.6rem 0.8rem;
-    text-align: left;
-    font-weight: 600;
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-    position: sticky;
-    top: 0;
-    cursor: pointer;
-    user-select: none;
-  }
-  thead th:hover { background: #3d5166; }
-  tbody tr:nth-child(even) { background: #f8f9fa; }
-  tbody tr:hover { background: #fff3f3; }
-  tbody td { padding: 0.55rem 0.8rem; border-bottom: 1px solid #eee; }
-  .bar-cell { display: flex; align-items: center; gap: 0.5rem; }
-  .mini-bar { height: 8px; border-radius: 4px; transition: width 0.3s; }
-  .na { color: #aaa; font-style: italic; }
-  .trend-up { color: var(--accent); }
-  .trend-down { color: var(--green); }
-
-  /* Region filter pills */
-  .pills { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-  .pill {
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.78rem;
-    font-weight: 600;
-    border: 2px solid transparent;
-    cursor: pointer;
-    transition: all 0.15s;
-    background: #eee;
-    color: var(--secondary);
-  }
-  .pill.active { background: var(--primary); color: white; border-color: var(--primary); }
-  .pill:hover:not(.active) { border-color: var(--primary); color: var(--primary); }
-
-  footer {
-    text-align: center;
-    padding: 1.5rem;
-    font-size: 0.75rem;
-    color: var(--muted);
-    border-top: 1px solid var(--border);
-    background: white;
-    margin-top: 1rem;
-  }
-  footer a { color: var(--primary); text-decoration: none; }
-  footer a:hover { text-decoration: underline; }
-
-  @media (max-width: 600px) {
-    .chart-grid { grid-template-columns: 1fr; }
-    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-  }
-</style>
-</head>
-<body>
-
-<header>
-  <h1>🦠 VIH/SIDA en América Latina</h1>
-  <p>Dashboard Epidemiológico Interactivo — 18 países · 2000 – 2020</p>
-  <div class="badges">
-    <span class="badge">📊 Harvard Dataverse</span>
-    <span class="badge">🌍 UNAIDS / World Bank</span>
-    <span class="badge">⚕️ Salud Pública</span>
-    <span class="badge">doi:10.7910/DVN/IRMDUB</span>
-  </div>
-</header>
-
-<div class="container">
-
-  <!-- KPI Cards -->
-  <div class="kpi-grid" id="kpiGrid"></div>
-
-  <!-- Controls -->
-  <div class="controls">
-    <div>
-      <label>📅 Año seleccionado:</label>
-      <input type="range" id="yearSlider" min="0" max="4" value="4" step="1" style="width:140px">
-      <span class="year-display" id="yearLabel">2020</span>
-    </div>
-    <div>
-      <label>🌎 Región:</label>
-      <div class="pills" id="regionPills"></div>
-    </div>
-    <div>
-      <label>📈 Indicador tabla:</label>
-      <select id="indicatorSelect">
-        <option value="plhiv">PVVIH (Personas viviendo con VIH)</option>
-        <option value="new_inf">Nuevas Infecciones / año</option>
-        <option value="incidence">Tasa Incidencia por 1,000</option>
-        <option value="art">Cobertura TAR (%)</option>
-        <option value="deaths">Muertes SIDA por 1,000</option>
-      </select>
-    </div>
-  </div>
-
-  <!-- Charts Row 1 -->
-  <div class="chart-grid">
-    <div class="chart-card">
-      <div class="chart-title"><span class="icon">👥</span> PVVIH por País (año seleccionado)</div>
-      <div class="chart-wrap"><canvas id="chartPLHIV"></canvas></div>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title"><span class="icon">💉</span> Cobertura TAR por País (%)</div>
-      <div class="chart-wrap"><canvas id="chartART"></canvas></div>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title"><span class="icon">📉</span> Nuevas Infecciones por País</div>
-      <div class="chart-wrap"><canvas id="chartNewInf"></canvas></div>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title"><span class="icon">⚠️</span> Muertes SIDA por 1,000 habitantes</div>
-      <div class="chart-wrap"><canvas id="chartDeaths"></canvas></div>
-    </div>
-    <div class="chart-card wide">
-      <div class="chart-title"><span class="icon">📈</span> Evolución Temporal — PVVIH (todos los países seleccionados)</div>
-      <div class="chart-wrap tall"><canvas id="chartTimeline"></canvas></div>
-    </div>
-    <div class="chart-card wide">
-      <div class="chart-title"><span class="icon">🔬</span> Evolución Cobertura TAR (%) — Todos los países</div>
-      <div class="chart-wrap"><canvas id="chartARTTimeline"></canvas></div>
-    </div>
-  </div>
-
-  <!-- Data Table -->
-  <div class="table-card">
-    <div class="table-title">📋 Tabla Comparativa de Datos (haz clic en un encabezado para ordenar)</div>
-    <table id="dataTable">
-      <thead id="tableHead"></thead>
-      <tbody id="tableBody"></tbody>
-    </table>
-  </div>
-
-</div>
-
-<footer>
-  Datos: <a href="https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/IRMDUB" target="_blank">Harvard Dataverse — doi:10.7910/DVN/IRMDUB</a> ·
-  Fuente: World Bank / UNAIDS Estimates · Autor: de la Serna, Juan Moisés (UNIR) ·
-  <a href="https://doi.org/10.7910/DVN/IRMDUB" target="_blank">Citar dataset</a>
-</footer>
-
-<script>
-// ===== DATA =====
-const RAW = [
-  {c:"Argentina",iso:"ARG",reg:"South America",plhiv:[56000,75000,94000,110000,130000],new_inf:[5200,5200,5100,5000,4800],inc:[0.28,0.27,0.25,0.23,0.21],art:[18,33,46,61,72],deaths:[0.3,0.3,0.4,0.4,0.4]},
-  {c:"Bolivia",iso:"BOL",reg:"South America",plhiv:[15000,18000,21000,24000,28000],new_inf:[1700,1800,1800,1800,1800],inc:[0.4,0.38,0.35,0.32,0.29],art:[0,1,6,23,46],deaths:[0.3,0.3,0.3,0.3,0.4]},
-  {c:"Brasil",iso:"BRA",reg:"South America",plhiv:[300000,360000,490000,710000,970000],new_inf:[null,null,null,null,null],inc:[0.26,0.28,0.48,0.59,0.57],art:[31,49,50,63,68],deaths:[0.3,0.3,0.4,0.5,0.7]},
-  {c:"Chile",iso:"CHL",reg:"South America",plhiv:[16000,24000,36000,49000,71000],new_inf:[1800,2200,2800,3200,3600],inc:[0.21,0.25,0.31,0.35,0.37],art:[11,34,40,57,76],deaths:[0.2,0.2,0.3,0.4,0.5]},
-  {c:"Colombia",iso:"COL",reg:"South America",plhiv:[100000,130000,140000,160000,200000],new_inf:[12000,10000,10000,9900,10000],inc:[0.58,0.47,0.45,0.41,0.4],art:[0,6,16,41,61],deaths:[0.4,0.5,0.5,0.5,0.6]},
-  {c:"Costa Rica",iso:"CRI",reg:"Central America",plhiv:[3400,6000,9500,14000,18000],new_inf:[500,720,910,1000,1100],inc:[0.22,0.31,0.37,0.4,0.41],art:[10,20,35,41,52],deaths:[0.1,0.2,0.3,0.4,0.5]},
-  {c:"Rep. Dominicana",iso:"DOM",reg:"Caribbean",plhiv:[74000,75000,75000,75000,79000],new_inf:[6200,4900,3800,3100,3700],inc:[1.4,1,0.74,0.57,0.66],art:[0,3,20,34,48],deaths:[1.4,1.3,1.2,1.1,1]},
-  {c:"Ecuador",iso:"ECU",reg:"South America",plhiv:[24000,30000,35000,41000,47000],new_inf:[2700,2400,2400,2100,1600],inc:[0.41,0.33,0.31,0.24,0.17],art:[1,4,20,38,71],deaths:[0.3,0.4,0.4,0.4,0.4]},
-  {c:"El Salvador",iso:"SLV",reg:"Central America",plhiv:[22000,22000,22000,24000,26000],new_inf:[2200,2000,1800,1900,2000],inc:[0.64,0.61,0.56,0.5,0.45],art:[0,12,43,57,66],deaths:[0.4,0.4,0.4,0.3,0.3]},
-  {c:"Guatemala",iso:"GTM",reg:"Central America",plhiv:[27000,27000,28000,28000,30000],new_inf:[2100,1300,830,720,1100],inc:[0.39,0.21,0.12,0.1,0.12],art:[0,12,44,58,71],deaths:[0.4,0.4,0.3,0.3,0.2]},
-  {c:"Honduras",iso:"HND",reg:"Central America",plhiv:[31000,28000,23000,20000,19000],new_inf:[2300,720,500,500,500],inc:[0.72,0.2,0.1,0.1,0.1],art:[0,13,33,52,63],deaths:[0.8,0.6,0.4,0.3,0.2]},
-  {c:"México",iso:"MEX",reg:"North America (Latin)",plhiv:[110000,150000,210000,270000,340000],new_inf:[13000,15000,17000,19000,20000],inc:[0.26,0.27,0.28,0.29,0.3],art:[9,21,31,43,59],deaths:[0.2,0.3,0.3,0.4,0.4]},
-  {c:"Nicaragua",iso:"NIC",reg:"Central America",plhiv:[null,null,null,null,null],new_inf:[null,null,null,null,null],inc:[null,null,null,null,null],art:[null,null,null,null,null],deaths:[null,null,null,null,null]},
-  {c:"Panamá",iso:"PAN",reg:"Central America",plhiv:[12000,15000,19000,24000,29000],new_inf:[1100,1100,1200,1300,1400],inc:[0.69,0.65,0.64,0.63,0.63],art:[6,16,29,42,52],deaths:[0.7,0.8,0.9,1,1.1]},
-  {c:"Paraguay",iso:"PRY",reg:"South America",plhiv:[11000,12000,13000,14000,16000],new_inf:[950,950,950,950,1200],inc:[0.3,0.3,0.31,0.3,0.3],art:[0,7,26,35,49],deaths:[0.2,0.2,0.3,0.3,0.3]},
-  {c:"Perú",iso:"PER",reg:"South America",plhiv:[55000,65000,76000,87000,100000],new_inf:[5500,5100,3900,5700,7700],inc:[0.4,0.34,0.25,0.32,0.38],art:[0,6,30,44,69],deaths:[0.4,0.3,0.3,0.4,0.4]},
-  {c:"Uruguay",iso:"URY",reg:"South America",plhiv:[11000,15000,20000,25000,32000],new_inf:[940,1100,1200,1200,1300],inc:[0.43,0.48,0.49,0.51,0.52],art:[15,35,47,61,73],deaths:[0.4,0.4,0.4,0.4,0.5]},
-  {c:"Venezuela",iso:"VEN",reg:"South America",plhiv:[null,null,null,null,null],new_inf:[null,null,null,null,null],inc:[null,null,null,null,null],art:[null,null,null,null,null],deaths:[null,null,null,null,null]}
-];
-
-const YEARS = [2000, 2005, 2010, 2015, 2020];
-const REGIONS = ["Todos","South America","Central America","Caribbean","North America (Latin)"];
-const COLORS = [
-  '#e74c3c','#3498db','#2ecc71','#f39c12','#9b59b6',
-  '#1abc9c','#e67e22','#34495e','#e91e63','#00bcd4',
-  '#ff5722','#4caf50','#607d8b','#ff9800','#673ab7',
-  '#795548','#009688','#f44336'
-];
-
-let currentYear = 4;
-let currentRegion = "Todos";
-let sortCol = null, sortAsc = true;
-let charts = {};
-
-// ===== FILTERS =====
-function filteredData() {
-  if (currentRegion === "Todos") return RAW;
-  return RAW.filter(d => d.reg === currentRegion);
-}
-
-function fmt(n, dec=0) {
-  if (n === null || n === undefined) return "N/A";
-  return n.toLocaleString('es-ES', {maximumFractionDigits: dec});
-}
-
-// ===== KPIs =====
-function updateKPIs() {
-  const yi = currentYear;
-  const data = filteredData().filter(d => d.plhiv[yi] !== null);
-  const totalPLHIV = data.reduce((s,d) => s + (d.plhiv[yi]||0), 0);
-  const totalNewInf = data.filter(d=>d.new_inf[yi]!==null).reduce((s,d) => s + (d.new_inf[yi]||0), 0);
-  const avgART = data.filter(d=>d.art[yi]!==null).reduce((s,d,_,a) => s + d.art[yi]/a.length, 0);
-  const avgDeaths = data.filter(d=>d.deaths[yi]!==null).reduce((s,d,_,a) => s + d.deaths[yi]/a.length, 0);
-  const countries = data.length;
-
-  const grid = document.getElementById('kpiGrid');
-  grid.innerHTML = `
-    <div class="kpi-card">
-      <div class="kpi-value">${fmt(totalPLHIV)}</div>
-      <div class="kpi-label">PVVIH Total</div>
-      <div class="kpi-sub">Año ${YEARS[yi]}</div>
-    </div>
-    <div class="kpi-card orange">
-      <div class="kpi-value">${totalNewInf>0?fmt(totalNewInf):'N/A'}</div>
-      <div class="kpi-label">Nuevas Infecciones</div>
-      <div class="kpi-sub">Año ${YEARS[yi]}</div>
-    </div>
-    <div class="kpi-card green">
-      <div class="kpi-value">${fmt(avgART,1)}%</div>
-      <div class="kpi-label">Cobertura TAR Media</div>
-      <div class="kpi-sub">${countries} países</div>
-    </div>
-    <div class="kpi-card blue">
-      <div class="kpi-value">${fmt(avgDeaths,2)}</div>
-      <div class="kpi-label">Muertes SIDA/1,000</div>
-      <div class="kpi-sub">Promedio regional</div>
-    </div>
-    <div class="kpi-card purple">
-      <div class="kpi-value">${countries}</div>
-      <div class="kpi-label">Países con datos</div>
-      <div class="kpi-sub">de 18 totales</div>
-    </div>
-  `;
-}
-
-// ===== CHARTS =====
-function makeBar(id, label, dataArr, labelsArr, color='#e74c3c', horizontal=false) {
-  const ctx = document.getElementById(id).getContext('2d');
-  if(charts[id]) charts[id].destroy();
-  charts[id] = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: labelsArr,
-      datasets: [{
-        label,
-        data: dataArr,
-        backgroundColor: COLORS.map(c => c + 'cc'),
-        borderColor: COLORS,
-        borderWidth: 1.5,
-        borderRadius: 4
-      }]
-    },
-    options: {
-      indexAxis: horizontal ? 'y' : 'x',
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {display: false},
-        tooltip: {
-          callbacks: {
-            label: ctx => ' ' + fmt(ctx.parsed[horizontal?'x':'y'], 1)
-          }
-        }
-      },
-      scales: {
-        x: { ticks: { font: {size:10}, maxRotation: 40 } },
-        y: { ticks: { font: {size:10} }, grid: {color:'#f0f0f0'} }
-      }
-    }
-  });
-}
-
-function updateBarCharts() {
-  const yi = currentYear;
-  const data = filteredData();
-  const valid = data.filter(d => d.plhiv[yi] !== null);
-
-  // PLHIV
-  const plhivSorted = [...valid].sort((a,b)=>(b.plhiv[yi]||0)-(a.plhiv[yi]||0));
-  makeBar('chartPLHIV','PVVIH',plhivSorted.map(d=>d.plhiv[yi]),plhivSorted.map(d=>d.iso),'#e74c3c',true);
-
-  // ART
-  const artValid = data.filter(d=>d.art[yi]!==null).sort((a,b)=>b.art[yi]-a.art[yi]);
-  makeBar('chartART','TAR %',artValid.map(d=>d.art[yi]),artValid.map(d=>d.iso),'#27ae60',true);
-
-  // New Infections
-  const niValid = data.filter(d=>d.new_inf[yi]!==null).sort((a,b)=>b.new_inf[yi]-a.new_inf[yi]);
-  makeBar('chartNewInf','Nuevas Infecciones',niValid.map(d=>d.new_inf[yi]),niValid.map(d=>d.iso),'#e67e22',true);
-
-  // Deaths
-  const deathsValid = data.filter(d=>d.deaths[yi]!==null).sort((a,b)=>b.deaths[yi]-a.deaths[yi]);
-  makeBar('chartDeaths','Muertes/1000',deathsValid.map(d=>d.deaths[yi]),deathsValid.map(d=>d.iso),'#c0392b',true);
-}
-
-function updateTimeline() {
-  const data = filteredData().filter(d => d.plhiv.some(v=>v!==null));
-  const ctx = document.getElementById('chartTimeline').getContext('2d');
-  if(charts['chartTimeline']) charts['chartTimeline'].destroy();
-  charts['chartTimeline'] = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: YEARS,
-      datasets: data.map((d,i) => ({
-        label: d.c,
-        data: d.plhiv,
-        borderColor: COLORS[i % COLORS.length],
-        backgroundColor: COLORS[i % COLORS.length] + '22',
-        tension: 0.3,
-        borderWidth: 2,
-        pointRadius: 4,
-        fill: false,
-        spanGaps: true
-      }))
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { position:'right', labels:{font:{size:10}, boxWidth:12} },
-        tooltip: { callbacks: { label: c => ' ' + c.dataset.label + ': ' + fmt(c.parsed.y) } }
-      },
-      scales: {
-        y: { ticks: {font:{size:10}}, grid:{color:'#f0f0f0'} },
-        x: { ticks: {font:{size:11}} }
-      }
-    }
-  });
-
-  // ART Timeline
-  const artData = filteredData().filter(d => d.art.some(v=>v!==null));
-  const ctx2 = document.getElementById('chartARTTimeline').getContext('2d');
-  if(charts['chartARTTimeline']) charts['chartARTTimeline'].destroy();
-  charts['chartARTTimeline'] = new Chart(ctx2, {
-    type: 'line',
-    data: {
-      labels: YEARS,
-      datasets: artData.map((d,i) => ({
-        label: d.c,
-        data: d.art,
-        borderColor: COLORS[i % COLORS.length],
-        backgroundColor: COLORS[i % COLORS.length] + '22',
-        tension: 0.3,
-        borderWidth: 2,
-        pointRadius: 4,
-        fill: false,
-        spanGaps: true
-      }))
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { position:'right', labels:{font:{size:10}, boxWidth:12} },
-        tooltip: { callbacks: { label: c => ' ' + c.dataset.label + ': ' + fmt(c.parsed.y,1) + '%' } }
-      },
-      scales: {
-        y: { min:0, max:110, ticks:{font:{size:10}, callback: v=>v+'%'}, grid:{color:'#f0f0f0'} },
-        x: { ticks: {font:{size:11}} }
-      }
-    }
-  });
-}
-
-// ===== TABLE =====
-const IND_KEYS = { plhiv:'plhiv', new_inf:'new_inf', incidence:'inc', art:'art', deaths:'deaths' };
-const IND_LABELS = { plhiv:'PVVIH', new_inf:'Nuevas Infecciones', incidence:'Incidencia/1000', art:'TAR %', deaths:'Muertes/1000' };
-
-function updateTable() {
-  const ind = document.getElementById('indicatorSelect').value;
-  const key = IND_KEYS[ind];
-  let data = filteredData();
-
-  // sort
-  if(sortCol !== null) {
-    data = [...data].sort((a,b) => {
-      let av = sortCol === 'country' ? a.c : a[key][sortCol];
-      let bv = sortCol === 'country' ? b.c : b[key][sortCol];
-      if(av===null) av = -Infinity;
-      if(bv===null) bv = -Infinity;
-      return sortAsc ? (av > bv ? 1 : -1) : (av < bv ? 1 : -1);
-    });
-  }
-
-  // Header
-  const head = document.getElementById('tableHead');
-  head.innerHTML = `<tr>
-    <th onclick="sortTable('country')">País ↕</th>
-    <th>Región</th>
-    ${YEARS.map((y,i) => `<th onclick="sortTable(${i})">${y} ↕</th>`).join('')}
-    <th>Tendencia 2000→2020</th>
-  </tr>`;
-
-  const maxVals = YEARS.map((_,yi) => Math.max(...data.map(d=>d[key][yi]||0)));
-
-  const tbody = document.getElementById('tableBody');
-  tbody.innerHTML = data.map(d => {
-    const cells = YEARS.map((y,yi) => {
-      const v = d[key][yi];
-      if(v===null) return `<td><span class="na">N/A</span></td>`;
-      const pct = maxVals[yi] > 0 ? (v/maxVals[yi]*100).toFixed(1) : 0;
-      const barColor = key==='art' ? '#27ae60' : key==='deaths' ? '#c0392b' : '#3498db';
-      return `<td>
-        <div class="bar-cell">
-          <div class="mini-bar" style="width:${pct}%;background:${barColor};min-width:2px"></div>
-          <span>${fmt(v, key==='art'||key==='deaths'||key==='incidence'?2:0)}</span>
-        </div>
-      </td>`;
-    });
-    const v0 = d[key][0], v4 = d[key][4];
-    let trend = '<span class="na">–</span>';
-    if(v0!==null && v4!==null) {
-      const diff = ((v4-v0)/Math.abs(v0||1)*100).toFixed(1);
-      const cls = parseFloat(diff) > 0 ? 'trend-up' : 'trend-down';
-      const arrow = parseFloat(diff) > 0 ? '↑' : '↓';
-      trend = `<span class="${cls}">${arrow} ${Math.abs(diff)}%</span>`;
-    }
-    return `<tr><td><strong>${d.c}</strong></td><td><small>${d.reg}</small></td>${cells.join('')}<td>${trend}</td></tr>`;
+  const mx=YEARS.map((_,i)=>Math.max(...d.map(x=>x[key][i]||0)));
+  const barCol=key==='art'?'#27ae60':key==='deaths'?'#c0392b':'#3498db';
+  document.getElementById('tHead').innerHTML=`<tr>
+    <th onclick="sort('c')">País ↕</th><th>Región</th>
+    ${YEARS.map((y,i)=>`<th onclick="sort(${i})">${y} ↕</th>`).join('')}
+    <th>Tendencia</th></tr>`;
+  document.getElementById('tBody').innerHTML=d.map(x=>{
+    const cells=YEARS.map((_,i)=>{
+      const v=x[key][i];
+      if(v==null)return`<td><span class="na">N/A</span></td>`;
+      const pct=mx[i]>0?v/mx[i]*100:0;
+      return`<td><div class="bar-cell"><div class="mini-bar" style="width:${pct}%;background:${barCol};min-width:2px;flex-shrink:0"></div><span>${fmt(v,key==='art'||key==='deaths'||key==='inc'?2:0)}</span></div></td>`;
+    }).join('');
+    const v0=x[key][0],v4=x[key][4];
+    let tr='<span class="na">–</span>';
+    if(v0!=null&&v4!=null){const d=((v4-v0)/Math.abs(v0||1)*100).toFixed(1);tr=`<span class="${+d>0?'up':'dn'}">${+d>0?'↑':'↓'}${Math.abs(d)}%</span>`;}
+    return`<tr><td><b>${x.c}</b></td><td><small>${x.reg}</small></td>${cells}<td>${tr}</td></tr>`;
   }).join('');
 }
 
-window.sortTable = function(col) {
-  if(sortCol === col) sortAsc = !sortAsc;
-  else { sortCol = col; sortAsc = false; }
-  updateTable();
-};
+window.sort=function(col){if(sortCol===col)sortAsc=!sortAsc;else{sortCol=col;sortAsc=false;}table();};
 
-// ===== REGION PILLS =====
-function initPills() {
-  const cont = document.getElementById('regionPills');
-  cont.innerHTML = REGIONS.map(r => `<span class="pill ${r===currentRegion?'active':''}" onclick="setRegion('${r}')">${r==='Todos'?'🌎 Todos':r}</span>`).join('');
+function pills(){
+  document.getElementById('regionPills').innerHTML=REGIONS.map(r=>`<span class="pill ${r===reg?'active':''}" onclick="setReg('${r}')">${r==='Todos'?'🌎 Todos':r}</span>`).join('');
 }
+window.setReg=function(r){reg=r;pills();all();};
 
-window.setRegion = function(r) {
-  currentRegion = r;
-  initPills();
-  updateAll();
-};
-
-// ===== YEAR SLIDER =====
-document.getElementById('yearSlider').addEventListener('input', function() {
-  currentYear = parseInt(this.value);
-  document.getElementById('yearLabel').textContent = YEARS[currentYear];
-  updateKPIs();
-  updateBarCharts();
-  updateTable();
+document.getElementById('yearSlider').addEventListener('input',function(){
+  yi=+this.value;
+  document.getElementById('yearLabel').textContent=YEARS[yi];
+  kpis();bars();table();
 });
+document.getElementById('indSel').addEventListener('change',table);
 
-document.getElementById('indicatorSelect').addEventListener('change', updateTable);
+function all(){kpis();bars();timelines();table();}
 
-// ===== INIT =====
-function updateAll() {
-  updateKPIs();
-  updateBarCharts();
-  updateTimeline();
-  updateTable();
-}
-
-initPills();
-// Ensure charts render correctly on initial page load
-window.addEventListener('load', function() {
-  setTimeout(updateAll, 150);
-});
+pills();
+window.addEventListener('load',function(){setTimeout(all,100);});
 </script>
 </body>
-        </html>
+</html>
