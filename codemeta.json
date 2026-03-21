@@ -1,14 +1,18 @@
 {
   "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-  "@type": "Dataset",
-  "name": "HIV/AIDS in Latin America Dashboard",
+  "@type": "SoftwareSourceCode",
+  "name": "Interactive dashboard: HIV/AIDS epidemiological data in Latin America (2000-2020). DOI: 10.7910/DVN/99WRWQ",
   "description": "Interactive dashboard: HIV/AIDS epidemiological data in Latin America (2000-2020). DOI: 10.7910/DVN/99WRWQ",
-  "identifier": "10.7910/DVN/99WRWQ",
-  "url": "https://doi.org/10.7910/DVN/99WRWQ",
+  "url": "https://github.com/juanmoisesd/hiv-aids-latinamerica-dashboard",
+  "codeRepository": "https://github.com/juanmoisesd/hiv-aids-latinamerica-dashboard",
+  "dateCreated": "2026-03-20",
+  "dateModified": "2026-03-20",
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "version": "1.0.0",
   "author": [
     {
       "@type": "Person",
-      "givenName": "Juan Mois\u00e9s",
+      "givenName": "Juan Moisés",
       "familyName": "de la Serna Tuya",
       "@id": "https://orcid.org/0000-0002-8401-8018",
       "affiliation": {
@@ -18,18 +22,25 @@
       "email": "juanmoises.delaserna@unir.net"
     }
   ],
-  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
   "keywords": [
-    "hiv",
     "aids",
-    "latin-america",
     "dashboard",
-    "open-data",
     "epidemiology",
+    "hiv",
+    "latin-america",
+    "open-data",
     "unaids"
   ],
-  "datePublished": "2026-03-20",
-  "version": "1.0",
-  "programmingLanguage": "Python",
-  "softwareVersion": "1.0"
+  "programmingLanguage": "HTML",
+  "maintainer": [
+    {
+      "@type": "Person",
+      "givenName": "Juan Moisés",
+      "familyName": "de la Serna Tuya"
+    }
+  ],
+  "funder": {
+    "@type": "Organization",
+    "name": "Universidad Internacional de La Rioja (UNIR)"
+  }
 }
