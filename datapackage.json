@@ -1,0 +1,37 @@
+{
+  "name": "hiv-aids-latinamerica-dashboard",
+  "title": "Interactive dashboard: HIV/AIDS epidemiological data in Latin America (2000-2020). DOI: 10.7910/DVN/99WRWQ",
+  "description": "Interactive dashboard: HIV/AIDS epidemiological data in Latin America (2000-2020). DOI: 10.7910/DVN/99WRWQ",
+  "version": "1.0.0",
+  "licenses": [
+    {
+      "name": "CC0-1.0",
+      "title": "CC0 1.0 Universal",
+      "path": "https://creativecommons.org/publicdomain/zero/1.0/"
+    }
+  ],
+  "contributors": [
+    {
+      "title": "Juan Moisés de la Serna Tuya",
+      "path": "https://orcid.org/0000-0002-8401-8018",
+      "role": "author",
+      "organization": "Universidad Internacional de La Rioja (UNIR)"
+    }
+  ],
+  "keywords": [
+    "aids",
+    "dashboard",
+    "epidemiology",
+    "hiv",
+    "latin-america",
+    "open-data",
+    "unaids"
+  ],
+  "sources": [
+    {
+      "title": "Compiled from public sources",
+      "path": "https://github.com/juanmoisesd/hiv-aids-latinamerica-dashboard"
+    }
+  ],
+  "created": "2026-03-20"
+}
