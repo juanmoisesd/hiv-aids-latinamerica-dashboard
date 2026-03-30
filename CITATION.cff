@@ -1,7 +1,8 @@
 cff-version: 1.2.0
-message: "If you use this software/dataset, please cite it as below."
+message: "If you use this dataset, please cite it as below."
 type: dataset
 title: "Interactive dashboard: HIV/AIDS epidemiological data in Latin America (2000-2020). DOI: 10.7910/DVN/99WRWQ"
+abstract: "Interactive dashboard: HIV/AIDS epidemiological data in Latin America (2000-2020). DOI: 10.7910/DVN/99WRWQ"
 authors:
   - family-names: "de la Serna Tuya"
     given-names: "Juan Moisés"
@@ -10,7 +11,6 @@ authors:
     email: "juanmoises.delaserna@unir.net"
 repository-code: "https://github.com/juanmoisesd/hiv-aids-latinamerica-dashboard"
 url: "https://juanmoisesd.github.io/hiv-aids-latinamerica-dashboard/"
-abstract: "Interactive dashboard: HIV/AIDS epidemiological data in Latin America (2000-2020). DOI: 10.7910/DVN/99WRWQ"
 keywords:
   - open-data
   - dataset
@@ -19,6 +19,7 @@ keywords:
 license: CC0-1.0
 version: "1.0.0"
 date-released: "2026-03-20"
+doi: "10.5281/zenodo.19145316"
 references:
   - type: dataset
     title: "Open Research Collection — Juan Moisés de la Serna Tuya"
